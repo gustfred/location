@@ -3,6 +3,8 @@
     package="com.abr.testing"
     android:versionCode="1"
     android:versionName="1.0" >
+    
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-sdk android:minSdkVersion="15" />
 
@@ -18,7 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.myapp.DisplayMessageActivity" />
+        <activity android:name=".DisplayMessageActivity" />
     </application>
 
 </manifest>

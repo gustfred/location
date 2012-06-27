@@ -24,4 +24,5 @@ public class Location_testActivity extends Activity {
     	intent.putExtra(EXTRA_MESSAGE, message);
     	startActivity(intent);
     }
+    
 }
