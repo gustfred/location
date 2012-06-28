@@ -18,6 +18,8 @@ public class Location_testActivity extends Activity {
     /** Called when the user selects the Send button */
     public void sendMessage(View view) {
         // Do something in response to button
+    	// GIT test
+    	// GIT test2
     	Intent intent = new Intent(this, DisplayMessageActivity.class);
     	EditText editText = (EditText) findViewById(R.id.edit_message);
     	String message = editText.getText().toString();
