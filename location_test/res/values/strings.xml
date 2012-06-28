@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="edit_message">Write something här! :) </string>
-    <string name="app_name">Location_test</string>
+	<string name="app_name">Location_test</string>
+    <string name="latest_laptime">Senaste varvtid</string>
+    
     <string name="button_send">Skicka</string>
 
 </resources>
