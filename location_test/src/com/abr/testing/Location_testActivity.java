@@ -28,6 +28,8 @@ public class Location_testActivity extends Activity {
     public boolean usingDistance = false;
     public int totalLaps = 0;
     public long raceStartTime = 0;
+    public long lapStartTime = 0;
+    public long currentLapTime = 0;
     
     
     @Override
@@ -80,8 +82,16 @@ public class Location_testActivity extends Activity {
     	if(!raceStarted){
     		raceStarted = true;
     		raceStartTime = location.getTime();
+    		lapStartTime = raceStartTime;
     	}
     	else{
+    		
+    		currentLapTime = ( location.getTime() - lapStartTime ) * 1000;
+    		TextView textViewCurrentLapTime = (TextView) findViewById(R.id.currentLaptime);
+	    	String stringCurrentLapTime = "" + currentLapTime;
+	    	textViewCurrentLapTime.setText(stringCurrentLapTime);
+    		
+    		
     		if(usingBearing){
     			
     		}
