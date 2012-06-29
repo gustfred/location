@@ -1,14 +1,17 @@
 package com.abr.testing;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import android.widget.TextView;
 
 public class Location_testActivity extends Activity {
@@ -21,7 +24,10 @@ public class Location_testActivity extends Activity {
     public boolean startRace = true; //Shall be set to true by a button
     public boolean raceStarted = false; //Start race clock and set this to true
     public boolean debugOn = true; //Shall be set to true by a button
+    public boolean usingBearing = false;
+    public boolean usingDistance = false;
     public int totalLaps = 0;
+    public long raceStartTime = 0;
     
     
     @Override
@@ -71,12 +77,24 @@ public class Location_testActivity extends Activity {
     
     public void checkIfNewLap(Location location){
     	
-    	String lapString;
-    	
-    	TextView laps = (TextView) findViewById(R.id.laps);
-    	lapString = "Varv: " + totalLaps;
-    	laps.setText(lapString);
-    	
+    	if(!raceStarted){
+    		raceStarted = true;
+    		raceStartTime = location.getTime();
+    	}
+    	else{
+    		if(usingBearing){
+    			
+    		}
+    		else if(usingDistance){
+    			
+    		}
+    		else{
+    			//Just for testing the function
+    	    	TextView laps = (TextView) findViewById(R.id.laps);
+    	    	String lapString = "DISABLED: No counting laptimes and laps";
+    	    	laps.setText(lapString);
+    		}
+    	}
     }
     
     public void printDebug(Location location){
@@ -85,10 +103,12 @@ public class Location_testActivity extends Activity {
 
     	double longitude = location.getLongitude();
     	double latitude = location.getLatitude();
-    	String longitude_deg = location.convert(longitude,Location.FORMAT_MINUTES);
-    	String latitude_deg = location.convert(latitude,Location.FORMAT_MINUTES);
+    	String longitudeMin = location.convert(longitude,Location.FORMAT_MINUTES);
+    	String latitudeMin = location.convert(latitude,Location.FORMAT_MINUTES);
+    	long time = location.getTime();
+    	String timeFormatted = getTime(time,"yyyy/dd/MM hh:mm:ss.SSS");
     	
-    	debugString = "Longitude: " + longitude_deg + "\nLatitude: " + latitude_deg;
+    	debugString = "Time (ms from 1970): " + time + "\nLongitude: " + longitudeMin + "\nLatitude: " + latitudeMin;
     	
     	if(location.hasAltitude()){
     		double altitude = location.getAltitude();
@@ -111,6 +131,16 @@ public class Location_testActivity extends Activity {
     	debugInfo.setText(debugString);
     	
     	
+    }
+    public static String getTime(long milliSeconds, String dateFormat)
+    {
+        // Create a DateFormatter object for displaying date in specified format.
+        DateFormat formatter = new SimpleDateFormat(dateFormat);
+
+        // Create a calendar object that will convert the date and time value in milliseconds to date. 
+         Calendar calendar = Calendar.getInstance();
+         calendar.setTimeInMillis(milliSeconds);
+         return formatter.format(calendar.getTime());
     }
     
     
