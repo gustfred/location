@@ -24,12 +24,17 @@ public class Location_testActivity extends Activity {
     public boolean startRace = true; //Shall be set to true by a button
     public boolean raceStarted = false; //Start race clock and set this to true
     public boolean debugOn = true; //Shall be set to true by a button
-    public boolean usingBearing = false;
-    public boolean usingDistance = false;
-    public int totalLaps = 0;
-    public long raceStartTime = 0;
-    public long lapStartTime = 0;
-    public long currentLapTime = 0;
+    public boolean usingBearing = false; //Counting laps using the bearing to start location
+    public float bearingSetting = 45; // Difference between lastLocation bearing to and current bearing to must exceed
+    public boolean usingDistance = false; //Counting laps using distance to start location
+    public float distanceSetting = 20; // The radius in which a location must be before distance exceeds again
+    public int totalLaps = 0; //Number of laps
+    public long raceStartTime = 0; //The utc time when the race was started
+    public long lapStartTime = 0; //The utc time when the lap started
+    public long currentLapTime = 0; //The current running utc time minus lapStartTime
+    public long lastLapTime = 0; // The time of the last completed lap
+    public Location startLocation; //The start location for reference long and lat
+    public Location lastLocation; //The last location visited to compare with current location (passed the starting line)
     
     
     @Override
@@ -83,19 +88,28 @@ public class Location_testActivity extends Activity {
     		raceStarted = true;
     		raceStartTime = location.getTime();
     		lapStartTime = raceStartTime;
+    		startLocation = location;
+    		lastLocation = startLocation;
     	}
     	else{
     		
-    		currentLapTime = ( location.getTime() - lapStartTime ) * 1000;
+    		currentLapTime = location.getTime() - lapStartTime;
     		TextView textViewCurrentLapTime = (TextView) findViewById(R.id.currentLaptime);
-	    	String stringCurrentLapTime = "" + currentLapTime;
-	    	textViewCurrentLapTime.setText(stringCurrentLapTime);
+	    	textViewCurrentLapTime.setText(getTime(currentLapTime,"mm:ss.SSS"));
     		
     		
-    		if(usingBearing){
-    			
+    		if(usingBearing && lastLocation.getTime()-startLocation.getTime() > 0){
+    			float lastBearingTo = lastLocation.bearingTo(startLocation);
+    			float currentBearingTo = location.bearingTo(startLocation);
+    			float bearingDiff = Math.abs(lastBearingTo-currentBearingTo);
+    			if(bearingDiff > bearingSetting){
+    				totalLaps = totalLaps + 1;
+    				//Later add stint laps
+    				
+    				compensateLocation(location);
+    			}    			
     		}
-    		else if(usingDistance){
+    		else if(usingDistance && lastLocation.getTime()-startLocation.getTime() > 0){
     			
     		}
     		else{
@@ -104,6 +118,10 @@ public class Location_testActivity extends Activity {
     	    	String lapString = "DISABLED: No counting laptimes and laps";
     	    	laps.setText(lapString);
     		}
+    		
+    		
+    		lastLocation = location;
+    		
     	}
     }
     
@@ -151,6 +169,24 @@ public class Location_testActivity extends Activity {
          Calendar calendar = Calendar.getInstance();
          calendar.setTimeInMillis(milliSeconds);
          return formatter.format(calendar.getTime());
+    }
+    public void compensateLocation(Location location){
+    	//Recalculate when passing finish line
+		if(location.hasSpeed()){
+			float lastToStart = lastLocation.distanceTo(startLocation);
+			float currentToStart = location.distanceTo(startLocation);
+			float travelledDistance = location.distanceTo(lastLocation);
+			float weightedDistance = ( currentToStart / (currentToStart + lastToStart) ) * travelledDistance;
+			long timeCompensate = (long) ( (weightedDistance / location.getSpeed()) / 1000 ); //get it in milliseconds
+			// Reset location to finish line
+			location.setTime(location.getTime()-timeCompensate);
+			location.setLatitude(startLocation.getLatitude());
+			location.setLongitude(startLocation.getLongitude());
+		}
+		lastLapTime = location.getTime() - lapStartTime;
+		lapStartTime = location.getTime();
+		//Add check if laptime is the driver's best one.
+		
     }
     
     
