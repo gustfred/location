@@ -35,6 +35,9 @@ public class Location_testActivity extends Activity {
     public long latestLapTime = 0; // The time of the last completed lap
     public Location startLocation; //The start location for reference long and lat
     public Location lastLocation; //The last location visited to compare with current location (passed the starting line)
+    public boolean leftStartLine = false; // Will be set to true when the car has left the start/finish line
+    public float startLineCriteria = 40; // Meters from starting point to be possible to register new lap
+    public boolean newLap = true; // Will be set to true when new lap is completed and set to false when leftStartLine is set to true
     
     
     @Override
@@ -63,7 +66,7 @@ public class Location_testActivity extends Activity {
             	}
             	//Set the clock
             	TextView clock = (TextView) findViewById(R.id.raceClock);
-    	    	clock.setText(getTime(location.getTime(),"hh:mm:ss.SSS"));
+    	    	clock.setText(getTime(location.getTime(),"HH:mm:ss.SSS"));
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -95,18 +98,27 @@ public class Location_testActivity extends Activity {
     		lastLocation = startLocation;
     	}
     	else{
-    		
     		currentLapTime = location.getTime() - lapStartTime;
     		TextView textViewCurrentLapTime = (TextView) findViewById(R.id.currentLaptime);
 	    	textViewCurrentLapTime.setText(getTime(currentLapTime,"mm:ss.SSS"));
+	    	
+	    	if(newLap){
+	    		float distanceFromStart = location.distanceTo(startLocation);
+	    		if(distanceFromStart > startLineCriteria && distanceFromStart > location.getAccuracy()){
+	    			leftStartLine = true;
+	    			newLap = false;
+	    		}
+	    	}
     		
-    		
-    		if(usingBearing && lastLocation.getTime()-startLocation.getTime() > 0){
+    		if(usingBearing && lastLocation.getTime()-startLocation.getTime() > 0 && leftStartLine){
     			float lastBearingTo = lastLocation.bearingTo(startLocation);
     			float currentBearingTo = location.bearingTo(startLocation);
     			float bearingDiff = Math.abs(lastBearingTo-currentBearingTo);
     			if(bearingDiff > bearingSetting){
     				totalLaps = totalLaps + 1;
+    				//
+    				newLap = true;
+    				leftStartLine = false;
     				TextView laps = (TextView) findViewById(R.id.laps);
         	    	String lapString = totalLaps + " laps";
         	    	laps.setText(lapString);
@@ -137,7 +149,7 @@ public class Location_testActivity extends Activity {
     	String longitudeMin = location.convert(longitude,Location.FORMAT_MINUTES);
     	String latitudeMin = location.convert(latitude,Location.FORMAT_MINUTES);
     	long time = location.getTime();
-    	String timeFormatted = getTime(time,"yyyy/dd/MM hh:mm:ss.SSS");
+    	String timeFormatted = getTime(time,"yyyy/dd/MM HH:mm:ss.SSS");
     	
     	debugString = "Time (ms from 1970): " + timeFormatted + "\nLongitude: " + longitudeMin + "\nLatitude: " + latitudeMin;
     	
