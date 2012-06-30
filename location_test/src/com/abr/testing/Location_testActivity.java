@@ -32,7 +32,7 @@ public class Location_testActivity extends Activity {
     public long raceStartTime = 0; //The utc time when the race was started
     public long lapStartTime = 0; //The utc time when the lap started
     public long currentLapTime = 0; //The current running utc time minus lapStartTime
-    public long lastLapTime = 0; // The time of the last completed lap
+    public long latestLapTime = 0; // The time of the last completed lap
     public Location startLocation; //The start location for reference long and lat
     public Location lastLocation; //The last location visited to compare with current location (passed the starting line)
     
@@ -61,6 +61,9 @@ public class Location_testActivity extends Activity {
             	if(debugOn){
             		printDebug(location);
             	}
+            	//Set the clock
+            	TextView clock = (TextView) findViewById(R.id.raceClock);
+    	    	clock.setText(getTime(location.getTime(),"hh:mm:ss.SSS"));
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -104,6 +107,9 @@ public class Location_testActivity extends Activity {
     			float bearingDiff = Math.abs(lastBearingTo-currentBearingTo);
     			if(bearingDiff > bearingSetting){
     				totalLaps = totalLaps + 1;
+    				TextView laps = (TextView) findViewById(R.id.laps);
+        	    	String lapString = totalLaps + " laps";
+        	    	laps.setText(lapString);
     				//Later add stint laps
     				
     				compensateLocation(location);
@@ -115,13 +121,10 @@ public class Location_testActivity extends Activity {
     		else{
     			//Just for testing the function
     	    	TextView laps = (TextView) findViewById(R.id.laps);
-    	    	String lapString = "DISABLED: No counting laptimes and laps";
+    	    	String lapString = "No laps";
     	    	laps.setText(lapString);
     		}
-    		
-    		
     		lastLocation = location;
-    		
     	}
     }
     
@@ -136,7 +139,7 @@ public class Location_testActivity extends Activity {
     	long time = location.getTime();
     	String timeFormatted = getTime(time,"yyyy/dd/MM hh:mm:ss.SSS");
     	
-    	debugString = "Time (ms from 1970): " + time + "\nLongitude: " + longitudeMin + "\nLatitude: " + latitudeMin;
+    	debugString = "Time (ms from 1970): " + timeFormatted + "\nLongitude: " + longitudeMin + "\nLatitude: " + latitudeMin;
     	
     	if(location.hasAltitude()){
     		double altitude = location.getAltitude();
@@ -153,7 +156,17 @@ public class Location_testActivity extends Activity {
     	if(location.hasBearing()){
     		float bearing = location.getBearing();
     		debugString = debugString + "\nBearing: " + bearing;
-    	} 	
+    	} 
+    	
+    	if(raceStarted){
+    		double startLongitude = startLocation.getLongitude();
+        	double startLatitude = startLocation.getLatitude();
+        	String startLongitudeMin = location.convert(startLongitude,Location.FORMAT_MINUTES);
+        	String startLatitudeMin = location.convert(startLatitude,Location.FORMAT_MINUTES);
+        	float bearingToStart = location.bearingTo(startLocation);
+        	String start = "Bearing to start: " + bearingToStart + "\nStart longitude: " + startLongitudeMin + "\nStart latitude: " + startLatitudeMin;
+        	debugString = start + "\n" + debugString;
+    	}
     	
     	TextView debugInfo = (TextView) findViewById(R.id.debugInfo);
     	debugInfo.setText(debugString);
@@ -183,10 +196,13 @@ public class Location_testActivity extends Activity {
 			location.setLatitude(startLocation.getLatitude());
 			location.setLongitude(startLocation.getLongitude());
 		}
-		lastLapTime = location.getTime() - lapStartTime;
+		latestLapTime = location.getTime() - lapStartTime;
 		lapStartTime = location.getTime();
 		//Add check if laptime is the driver's best one.
 		
+		//Add latest laptime to textfield
+		TextView textViewlastLapTime = (TextView) findViewById(R.id.latestLaptime);
+    	textViewlastLapTime.setText(getTime(latestLapTime,"mm:ss.SSS"));
     }
     
     
