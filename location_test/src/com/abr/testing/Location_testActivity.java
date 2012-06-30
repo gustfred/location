@@ -24,7 +24,7 @@ public class Location_testActivity extends Activity {
     public boolean startRace = true; //Shall be set to true by a button
     public boolean raceStarted = false; //Start race clock and set this to true
     public boolean debugOn = true; //Shall be set to true by a button
-    public boolean usingBearing = false; //Counting laps using the bearing to start location
+    public boolean usingBearing = true; //Counting laps using the bearing to start location
     public float bearingSetting = 45; // Difference between lastLocation bearing to and current bearing to must exceed
     public boolean usingDistance = false; //Counting laps using distance to start location
     public float distanceSetting = 20; // The radius in which a location must be before distance exceeds again
