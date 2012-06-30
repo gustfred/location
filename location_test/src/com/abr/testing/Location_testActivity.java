@@ -110,7 +110,7 @@ public class Location_testActivity extends Activity {
 	    		}
 	    	}
     		
-    		if(usingBearing && lastLocation.getTime()-startLocation.getTime() > 0 && leftStartLine){
+    		if(usingBearing && leftStartLine){
     			float lastBearingTo = lastLocation.bearingTo(startLocation);
     			float currentBearingTo = location.bearingTo(startLocation);
     			float bearingDiff = Math.abs(lastBearingTo-currentBearingTo);
@@ -127,7 +127,7 @@ public class Location_testActivity extends Activity {
     				compensateLocation(location);
     			}    			
     		}
-    		else if(usingDistance && lastLocation.getTime()-startLocation.getTime() > 0){
+    		else if(usingDistance && leftStartLine){
     			
     		}
     		else{
