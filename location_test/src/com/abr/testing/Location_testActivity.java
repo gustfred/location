@@ -1,5 +1,6 @@
 package com.abr.testing;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -9,9 +10,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import android.os.PowerManager;
 import android.widget.TextView;
 
 public class Location_testActivity extends Activity {
@@ -21,6 +20,8 @@ public class Location_testActivity extends Activity {
     //Global variables
     public LocationManager locationManager;
     public LocationListener locationListener;
+    public PowerManager powerManager;
+    public PowerManager.WakeLock wakeLock;
     public boolean startRace = true; //Shall be set to true by a button
     public boolean raceStarted = false; //Start race clock and set this to true
     public boolean debugOn = true; //Shall be set to true by a button
@@ -47,10 +48,11 @@ public class Location_testActivity extends Activity {
         
         // Acquire a reference to the system Location Manager
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
 
         
     }
-    
+
     @Override
     public void onStart(){
     	super.onStart();
@@ -74,8 +76,12 @@ public class Location_testActivity extends Activity {
             public void onProviderEnabled(String provider) {}
 
             public void onProviderDisabled(String provider) {}
-          };
-       
+        };
+        
+        //Will not let the screen lock it self
+        wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+        wakeLock.acquire();
+        
 
         // Register the listener with the Location Manager to receive location updates
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
@@ -86,6 +92,8 @@ public class Location_testActivity extends Activity {
     	super.onStop();
     	// Remove the listener you previously added
     	locationManager.removeUpdates(locationListener);
+    	//stop holding the screen lit
+    	wakeLock.release();
     }
     
     public void checkIfNewLap(Location location){
@@ -114,7 +122,7 @@ public class Location_testActivity extends Activity {
     			float lastBearingTo = lastLocation.bearingTo(startLocation);
     			float currentBearingTo = location.bearingTo(startLocation);
     			float bearingDiff = Math.abs(lastBearingTo-currentBearingTo);
-    			if(bearingDiff > bearingSetting){
+    			if(bearingDiff > bearingSetting && location.distanceTo(startLocation) < startLineCriteria){
     				totalLaps = totalLaps + 1;
     				//
     				newLap = true;

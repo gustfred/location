@@ -11,6 +11,7 @@
     <application
         android:icon="@drawable/abr"
         android:label="@string/app_name" >
+        android:screenOrientation="landscape"
         <activity
             android:name=".Location_testActivity"
             android:label="@string/app_name" >
