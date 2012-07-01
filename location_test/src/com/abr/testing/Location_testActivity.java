@@ -66,7 +66,7 @@ public class Location_testActivity extends Activity {
             	}
             	//Set the clock
             	TextView clock = (TextView) findViewById(R.id.raceClock);
-    	    	clock.setText(getTime(location.getTime(),"HH:mm:ss.SSS"));
+    	    	clock.setText(getTime(location.getTime(),"HH:mm:ss"));
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -100,7 +100,7 @@ public class Location_testActivity extends Activity {
     	else{
     		currentLapTime = location.getTime() - lapStartTime;
     		TextView textViewCurrentLapTime = (TextView) findViewById(R.id.currentLaptime);
-	    	textViewCurrentLapTime.setText(getTime(currentLapTime,"mm:ss.SSS"));
+	    	textViewCurrentLapTime.setText(getTime(currentLapTime,"mm:ss.SS"));
 	    	
 	    	if(newLap){
 	    		float distanceFromStart = location.distanceTo(startLocation);
@@ -149,7 +149,7 @@ public class Location_testActivity extends Activity {
     	String longitudeMin = location.convert(longitude,Location.FORMAT_MINUTES);
     	String latitudeMin = location.convert(latitude,Location.FORMAT_MINUTES);
     	long time = location.getTime();
-    	String timeFormatted = getTime(time,"yyyy/dd/MM HH:mm:ss.SSS");
+    	String timeFormatted = getTime(time,"yyyy-MM-dd HH:mm:ss.SS");
     	
     	debugString = "Time (ms from 1970): " + timeFormatted + "\nLongitude: " + longitudeMin + "\nLatitude: " + latitudeMin;
     	
@@ -179,12 +179,13 @@ public class Location_testActivity extends Activity {
         	String start = "Bearing to start: " + bearingToStart + "\nStart longitude: " + startLongitudeMin + "\nStart latitude: " + startLatitudeMin;
         	debugString = start + "\n" + debugString;
     	}
+    	//Check the newLap and leftStartLine booleans
+    	debugString = debugString + "\nNew lap: " + newLap + "\nLeft start/finish: " + leftStartLine;
     	
     	TextView debugInfo = (TextView) findViewById(R.id.debugInfo);
     	debugInfo.setText(debugString);
-    	
-    	
     }
+    
     public static String getTime(long milliSeconds, String dateFormat)
     {
         // Create a DateFormatter object for displaying date in specified format.
@@ -195,6 +196,7 @@ public class Location_testActivity extends Activity {
          calendar.setTimeInMillis(milliSeconds);
          return formatter.format(calendar.getTime());
     }
+    
     public void compensateLocation(Location location){
     	//Recalculate when passing finish line
 		if(location.hasSpeed()){
@@ -214,7 +216,7 @@ public class Location_testActivity extends Activity {
 		
 		//Add latest laptime to textfield
 		TextView textViewlastLapTime = (TextView) findViewById(R.id.latestLaptime);
-    	textViewlastLapTime.setText(getTime(latestLapTime,"mm:ss.SSS"));
+    	textViewlastLapTime.setText(getTime(latestLapTime,"mm:ss.SS"));
     }
     
     
