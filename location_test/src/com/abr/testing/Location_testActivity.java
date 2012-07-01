@@ -48,9 +48,9 @@ public class Location_testActivity extends Activity {
         
         // Acquire a reference to the system Location Manager
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-
-        
+        //No locking of screen
+        powerManager = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
     }
 
     @Override
@@ -76,15 +76,12 @@ public class Location_testActivity extends Activity {
             public void onProviderEnabled(String provider) {}
 
             public void onProviderDisabled(String provider) {}
-        };
-        
-        //Will not let the screen lock it self
-        wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
-        wakeLock.acquire();
-        
+        };        
 
         // Register the listener with the Location Manager to receive location updates
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        //Will not let the screen lock it self
+        wakeLock.acquire();
     }
     
     @Override
