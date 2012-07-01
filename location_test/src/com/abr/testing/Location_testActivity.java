@@ -10,7 +10,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.PowerManager;
+import android.view.WindowManager.LayoutParams;
 import android.widget.TextView;
 
 public class Location_testActivity extends Activity {
@@ -20,8 +20,6 @@ public class Location_testActivity extends Activity {
     //Global variables
     public LocationManager locationManager;
     public LocationListener locationListener;
-    public PowerManager powerManager;
-    public PowerManager.WakeLock wakeLock;
     public boolean startRace = true; //Shall be set to true by a button
     public boolean raceStarted = false; //Start race clock and set this to true
     public boolean debugOn = true; //Shall be set to true by a button
@@ -48,9 +46,8 @@ public class Location_testActivity extends Activity {
         
         // Acquire a reference to the system Location Manager
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        //No locking of screen
-        powerManager = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
-        wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+        //Keep screen lit
+        this.getWindow().addFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
@@ -80,8 +77,6 @@ public class Location_testActivity extends Activity {
 
         // Register the listener with the Location Manager to receive location updates
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-        //Will not let the screen lock it self
-        wakeLock.acquire();
     }
     
     @Override
@@ -89,8 +84,6 @@ public class Location_testActivity extends Activity {
     	super.onStop();
     	// Remove the listener you previously added
     	locationManager.removeUpdates(locationListener);
-    	//stop holding the screen lit
-    	wakeLock.release();
     }
     
     public void checkIfNewLap(Location location){
