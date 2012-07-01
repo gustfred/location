@@ -132,9 +132,9 @@ public class Location_testActivity extends Activity {
     		}
     		else{
     			//Just for testing the function
-    	    	TextView laps = (TextView) findViewById(R.id.laps);
-    	    	String lapString = "No laps";
-    	    	laps.setText(lapString);
+    	    	/*TextView laps = (TextView) findViewById(R.id.laps);
+    	    	String lapString = totalLaps + " laps";
+    	    	laps.setText(lapString);*/
     		}
     		lastLocation = location;
     	}
