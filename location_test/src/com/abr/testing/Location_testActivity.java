@@ -37,6 +37,7 @@ public class Location_testActivity extends Activity {
     public boolean leftStartLine = false; // Will be set to true when the car has left the start/finish line
     public float startLineCriteria = 40; // Meters from starting point to be possible to register new lap
     public boolean newLap = true; // Will be set to true when new lap is completed and set to false when leftStartLine is set to true
+    public String currentDriver = "Fredrik"; // String containing the name of the current driver
     
     
     @Override
@@ -210,7 +211,14 @@ public class Location_testActivity extends Activity {
 		}
 		latestLapTime = location.getTime() - lapStartTime;
 		lapStartTime = location.getTime();
+		//Add lap to textview all Laps.
+		TextView textViewallLaps = (TextView) findViewById(R.id.allLaps);
+		String allLapsString = "\n" + totalLaps + " " + getTime(latestLapTime,"mm:ss.SS") + " " + currentDriver;
+    	textViewallLaps.append(allLapsString);
+		
 		//Add check if laptime is the driver's best one.
+		//if
+		
 		
 		//Add latest laptime to textfield
 		TextView textViewlastLapTime = (TextView) findViewById(R.id.latestLaptime);
