@@ -18,6 +18,16 @@
 	        android:text="Senaste varvtid"
 	        android:textAppearance="?android:attr/textAppearanceLarge"
 	        android:textSize="50sp" />
+	    <ToggleButton 
+		    android:id="@+id/startRace"
+		    android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
+		    android:textOn="Race on"
+		    android:textOff="Race off"
+		    android:onClick="toggleStartRace"
+		    android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:textSize="50sp"/>
 	
 	    <TextView
 	        android:id="@+id/raceClock"
@@ -26,7 +36,8 @@
 	        android:layout_weight="1"
 	        android:text="Klocka"
 	        android:textAppearance="?android:attr/textAppearanceLarge"
-	        android:textSize="50sp" />
+	        android:textSize="50sp" 
+	        android:gravity="center"/>
 	</LinearLayout>
 	
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -41,6 +52,17 @@
 	        android:text="Rullande varvtid"
 	        android:textAppearance="?android:attr/textAppearanceLarge"
 	        android:textSize="50sp" />
+	    
+	    <ToggleButton 
+		    android:id="@+id/debugOn"
+		    android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
+		    android:textOn="Debug on"
+		    android:textOff="Debug off"
+		    android:onClick="toggleDebug"
+		    android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:textSize="50sp"/>
 	
 		<TextView
 		    android:id="@+id/laps"
@@ -49,7 +71,8 @@
 		    android:layout_weight="1"
 		    android:text="Varv"
 		    android:textAppearance="?android:attr/textAppearanceLarge"
-		    android:textSize="50sp" />
+		    android:textSize="50sp" 
+		    android:gravity="center"/>
 	</LinearLayout>
 	
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

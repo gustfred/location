@@ -10,8 +10,10 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 public class Location_testActivity extends Activity {
     /** Called when the activity is first created. */
@@ -20,7 +22,7 @@ public class Location_testActivity extends Activity {
     //Global variables
     public LocationManager locationManager;
     public LocationListener locationListener;
-    public boolean startRace = true; //Shall be set to true by a button
+    public boolean startRace = false; //Shall be set to true by a button
     public boolean raceStarted = false; //Start race clock and set this to true
     public boolean debugOn = true; //Shall be set to true by a button
     public boolean usingBearing = true; //Counting laps using the bearing to start location
@@ -145,12 +147,12 @@ public class Location_testActivity extends Activity {
 
     	double longitude = location.getLongitude();
     	double latitude = location.getLatitude();
-    	String longitudeMin = location.convert(longitude,Location.FORMAT_MINUTES);
-    	String latitudeMin = location.convert(latitude,Location.FORMAT_MINUTES);
+    	String longitudeMin = Location.convert(longitude,Location.FORMAT_MINUTES);
+    	String latitudeMin = Location.convert(latitude,Location.FORMAT_MINUTES);
     	long time = location.getTime();
     	String timeFormatted = getTime(time,"yyyy-MM-dd HH:mm:ss.SS");
     	
-    	debugString = "Time (ms from 1970): " + timeFormatted + "\nLongitude: " + longitudeMin + "\nLatitude: " + latitudeMin;
+    	debugString = "Time: " + timeFormatted + "\nLongitude: " + longitudeMin + "\nLatitude: " + latitudeMin;
     	
     	if(location.hasAltitude()){
     		double altitude = location.getAltitude();
@@ -172,8 +174,8 @@ public class Location_testActivity extends Activity {
     	if(raceStarted){
     		double startLongitude = startLocation.getLongitude();
         	double startLatitude = startLocation.getLatitude();
-        	String startLongitudeMin = location.convert(startLongitude,Location.FORMAT_MINUTES);
-        	String startLatitudeMin = location.convert(startLatitude,Location.FORMAT_MINUTES);
+        	String startLongitudeMin = Location.convert(startLongitude,Location.FORMAT_MINUTES);
+        	String startLatitudeMin = Location.convert(startLatitude,Location.FORMAT_MINUTES);
         	float bearingToStart = location.bearingTo(startLocation);
         	String start = "Bearing to start: " + bearingToStart + "\nStart longitude: " + startLongitudeMin + "\nStart latitude: " + startLatitudeMin;
         	debugString = start + "\n" + debugString;
@@ -223,6 +225,27 @@ public class Location_testActivity extends Activity {
 		//Add latest laptime to textfield
 		TextView textViewlastLapTime = (TextView) findViewById(R.id.latestLaptime);
     	textViewlastLapTime.setText(getTime(latestLapTime,"mm:ss.SS"));
+    }
+    
+    public void toggleStartRace(View view) {
+        // Is the start race toggle on?
+        boolean on = ((ToggleButton) view).isChecked();
+        
+        if (on) {
+        	startRace = true;
+        } else {
+        	startRace = false;
+        }
+    }
+    public void toggleDebug(View view) {
+        // Is the start race toggle on?
+        boolean on = ((ToggleButton) view).isChecked();
+        
+        if (on) {
+        	debugOn = true;
+        } else {
+        	debugOn = false;
+        }
     }
     
     

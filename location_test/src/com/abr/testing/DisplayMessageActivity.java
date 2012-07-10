@@ -28,7 +28,7 @@ public class DisplayMessageActivity extends Activity {
               // Called when a new location is found by the network location provider.
               //makeUseOfNewLocation(location);
               double plats = location.getLongitude();
-              String longitude_deg = location.convert(plats,Location.FORMAT_DEGREES);
+              String longitude_deg = Location.convert(plats,Location.FORMAT_DEGREES);
               textView.setText(longitude_deg);
 
               setContentView(textView);
