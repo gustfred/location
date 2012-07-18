@@ -1,15 +1,22 @@
 package com.abr.testing;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.TextView;
@@ -18,13 +25,14 @@ import android.widget.ToggleButton;
 public class Location_testActivity extends Activity {
     /** Called when the activity is first created. */
 	public final static String EXTRA_MESSAGE = "com.example.myapp.MESSAGE";
+	public static final String PREFS_NAME = "abrLapTimer";
     
     //Global variables
     public LocationManager locationManager;
     public LocationListener locationListener;
     public boolean startRace = false; //Shall be set to true by a button
     public boolean raceStarted = false; //Start race clock and set this to true
-    public boolean debugOn = true; //Shall be set to true by a button
+    public boolean debugOn; //Shall be set to true/false by a button and it's state is now saved
     public boolean usingBearing = true; //Counting laps using the bearing to start location
     public float bearingSetting = 45; // Difference between lastLocation bearing to and current bearing to must exceed
     public boolean usingDistance = false; //Counting laps using distance to start location
@@ -34,8 +42,8 @@ public class Location_testActivity extends Activity {
     public long lapStartTime = 0; //The utc time when the lap started
     public long currentLapTime = 0; //The current running utc time minus lapStartTime
     public long latestLapTime = 0; // The time of the last completed lap
-    public Location startLocation; //The start location for reference long and lat
-    public Location lastLocation; //The last location visited to compare with current location (passed the starting line)
+    public Location startLocation = null; //The start location for reference long and lat
+    public Location lastLocation = null; //The last location visited to compare with current location (passed the starting line)
     public boolean leftStartLine = false; // Will be set to true when the car has left the start/finish line
     public float startLineCriteria = 40; // Meters from starting point to be possible to register new lap
     public boolean newLap = true; // Will be set to true when new lap is completed and set to false when leftStartLine is set to true
@@ -47,6 +55,13 @@ public class Location_testActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+        // Restore preferences
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        debugOn = settings.getBoolean("debugMode", false);
+        //Toggle debug on/off
+        ToggleButton debugButton = (ToggleButton) findViewById(R.id.debugOn);
+        debugButton.setChecked(debugOn);
+        
         // Acquire a reference to the system Location Manager
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         //Keep screen lit
@@ -55,7 +70,8 @@ public class Location_testActivity extends Activity {
 
     @Override
     public void onStart(){
-    	super.onStart();
+    	super.onStart(); 	
+    	
         // Define a listener that responds to location updates
         locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
@@ -85,6 +101,47 @@ public class Location_testActivity extends Activity {
     @Override
     public void onStop(){
     	super.onStop();
+    	// We need an Editor object to make preference changes.
+        // All objects are from android.context.Context
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("debugMode", debugOn);
+        // Commit the edits!
+        editor.commit();
+        
+        //Save all lap times to file
+        //but only if lastLocation has been updated
+        if(lastLocation != null){
+        	String FILENAME = getTime(lastLocation.getTime(),"yyyy-MM-dd_HH_mm_ss_SS" + ".txt");
+            TextView laps = (TextView) findViewById(R.id.allLaps);
+            CharSequence chars = laps.getText();
+            String string = chars.toString(); 
+
+        
+	        String state = Environment.getExternalStorageState();
+	
+	        if (Environment.MEDIA_MOUNTED.equals(state)) {
+	            // We can read and write the media
+	        	File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+	            File file = new File(path, FILENAME);
+	            
+	            try {
+	                // Make sure the directory exists.
+	                path.mkdirs();
+
+	                // Copy the string to the file.
+	                OutputStream os = new FileOutputStream(file);
+	                os.write(string.getBytes());
+	                os.close();
+
+	            } catch (IOException e) {
+	            	//Hmm should have some exceptions handling here
+
+	            }
+	        }
+
+        }
+    	
     	// Remove the listener you previously added
     	locationManager.removeUpdates(locationListener);
     }
@@ -100,7 +157,7 @@ public class Location_testActivity extends Activity {
     	}
     	else{
     		currentLapTime = location.getTime() - lapStartTime;
-    		TextView textViewCurrentLapTime = (TextView) findViewById(R.id.currentLaptime);
+    		TextView textViewCurrentLapTime = (TextView) findViewById(R.id.currentLapTime);
 	    	textViewCurrentLapTime.setText(getTime(currentLapTime,"mm:ss.SS"));
 	    	
 	    	if(newLap){
@@ -245,6 +302,9 @@ public class Location_testActivity extends Activity {
         	debugOn = true;
         } else {
         	debugOn = false;
+        	// Clear the debugInfo textview
+        	TextView debugInfo = (TextView) findViewById(R.id.debugInfo);
+        	debugInfo.setText("");
         }
     }
     
