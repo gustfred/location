@@ -17,7 +17,7 @@
 	        android:layout_weight="3"
 	        android:text="Senaste varvtid"
 	        android:textAppearance="?android:attr/textAppearanceLarge"
-	        android:textSize="50sp" />
+	        android:textSize="60sp" />
 	
 	    <TextView
 	        android:id="@+id/raceClock"
@@ -26,7 +26,7 @@
 	        android:layout_weight="1"
 	        android:text="Klocka"
 	        android:textAppearance="?android:attr/textAppearanceLarge"
-	        android:textSize="50sp" 
+	        android:textSize="60sp" 
 	        android:gravity="center"/>
 	</LinearLayout>
 	
@@ -41,7 +41,7 @@
 	        android:layout_weight="3"
 	        android:text="Rullande varvtid"
 	        android:textAppearance="?android:attr/textAppearanceLarge"
-	        android:textSize="50sp" />
+	        android:textSize="60sp" />
 	
 		<TextView
 		    android:id="@+id/laps"
@@ -50,7 +50,7 @@
 		    android:layout_weight="1"
 		    android:text="Varv"
 		    android:textAppearance="?android:attr/textAppearanceLarge"
-		    android:textSize="50sp" 
+		    android:textSize="60sp" 
 		    android:gravity="center"/>
 	</LinearLayout>
 	
@@ -84,6 +84,20 @@
 			    android:onClick="toggleDebug"
 			    android:textAppearance="?android:attr/textAppearanceLarge"
 		        android:textSize="50sp"/>
+	        <TextView
+		        android:id="@+id/currentDriver"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="The Driver"
+		        android:textAppearance="?android:attr/textAppearanceLarge"
+		        android:textSize="50sp" />
+	        <TextView
+		        android:id="@+id/driverLaps"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="stint/total laps"
+		        android:textAppearance="?android:attr/textAppearanceLarge"
+		        android:textSize="50sp" />
 
 	    </LinearLayout>
 	    
@@ -178,7 +192,8 @@
 		    android:layout_weight="1"
 		    android:text="Driver1"
 		    android:textAppearance="?android:attr/textAppearanceLarge"
-		    android:textSize="50sp" />
+		    android:textSize="50sp" 
+		    android:onClick="changeDriver" />
 	    <Button
 		    android:id="@+id/driver2"
 		    android:layout_width="0dp"
@@ -186,7 +201,8 @@
 		    android:layout_weight="1"
 		    android:text="Driver2"
 		    android:textAppearance="?android:attr/textAppearanceLarge"
-		    android:textSize="50sp" />
+		    android:textSize="50sp" 
+		    android:onClick="changeDriver" />
 		<Button
 		    android:id="@+id/driver3"
 		    android:layout_width="0dp"
@@ -194,7 +210,8 @@
 		    android:layout_weight="1"
 		    android:text="Driver3"
 		    android:textAppearance="?android:attr/textAppearanceLarge"
-		    android:textSize="50sp" />
+		    android:textSize="50sp" 
+		    android:onClick="changeDriver" />
 	    <Button
 		    android:id="@+id/driver4"
 		    android:layout_width="0dp"
@@ -202,7 +219,8 @@
 		    android:layout_weight="1"
 		    android:text="Driver4"
 		    android:textAppearance="?android:attr/textAppearanceLarge"
-		    android:textSize="50sp" />
+		    android:textSize="50sp" 
+		    android:onClick="changeDriver" />
 		
     </LinearLayout>
 		

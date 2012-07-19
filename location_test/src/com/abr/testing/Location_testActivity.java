@@ -47,6 +47,7 @@ public class Location_testActivity extends Activity {
     public float startLineCriteria = 40; // Meters from starting point to be possible to register new lap
     public boolean newLap = true; // Will be set to true when new lap is completed and set to false when leftStartLine is set to true
     public String currentDriver = "Fredrik"; // String containing the name of the current driver
+    public Driver driver1 = new Driver(), driver2 = new Driver(), driver3 = new Driver(), driver4 = new Driver(); //Four drivers 
     
     
     @Override
@@ -60,6 +61,20 @@ public class Location_testActivity extends Activity {
         //Toggle debug on/off
         ToggleButton debugButton = (ToggleButton) findViewById(R.id.debugOn);
         debugButton.setChecked(debugOn);
+        
+        //Set the name for the four drivers
+        driver1.setName("Fredrik");
+        driver2.setName("Magnus");
+        driver3.setName("Emil");
+        driver4.setName("Guest");
+        TextView driver1Text = (TextView) findViewById(R.id.driver1);
+        TextView driver2Text = (TextView) findViewById(R.id.driver2);
+        TextView driver3Text = (TextView) findViewById(R.id.driver3);
+        TextView driver4Text = (TextView) findViewById(R.id.driver4);
+        driver1Text.setText(driver1.getName());
+        driver2Text.setText(driver2.getName());
+        driver3Text.setText(driver3.getName());
+        driver4Text.setText(driver4.getName());
         
         // Acquire a reference to the system Location Manager
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -111,7 +126,7 @@ public class Location_testActivity extends Activity {
         //Save all lap times to file
         //but only if lastLocation has been updated
         if(lastLocation != null){
-        	String FILENAME = getTime(lastLocation.getTime(),"yyyy-MM-dd_HH_mm_ss_SS" + ".txt");
+        	String FILENAME = getTime(lastLocation.getTime(),"yyyy-MM-dd_HH_mm_ss_SS") + ".txt";
             TextView laps = (TextView) findViewById(R.id.allLaps);
             CharSequence chars = laps.getText();
             String string = chars.toString(); 
@@ -275,8 +290,7 @@ public class Location_testActivity extends Activity {
     	textViewallLaps.append(allLapsString);
 		
 		//Add check if laptime is the driver's best one.
-		//if
-		
+		checkCurrentDriverBestTime(latestLapTime);
 		
 		//Add latest laptime to textfield
 		TextView textViewlastLapTime = (TextView) findViewById(R.id.latestLaptime);
@@ -291,6 +305,8 @@ public class Location_testActivity extends Activity {
         	startRace = true;
         } else {
         	startRace = false;
+        	//Also set race as not started
+        	raceStarted=false;
         }
     }
     public void toggleDebug(View view) {
@@ -305,6 +321,53 @@ public class Location_testActivity extends Activity {
         	TextView debugInfo = (TextView) findViewById(R.id.debugInfo);
         	debugInfo.setText("");
         }
+    }
+    public void changeDriver(View view) {
+        // Is the start race toggle on?
+        CharSequence driverNameChar = ((TextView) view).getText();
+        String driverName = driverNameChar.toString();
+
+    	// Change Current driver
+        currentDriver = driverName;
+    	TextView current = (TextView) findViewById(R.id.currentDriver);
+    	current.setText(currentDriver);
+    }
+    public void checkCurrentDriverBestTime(long lapTime){
+    	long time;
+    	if(currentDriver == driver1.getName()){
+    		time = driver1.getTime();
+    		if(time == 0 || lapTime < time ){
+    			driver1.setTime(lapTime);
+    			TextView bestTime = (TextView) findViewById(R.id.driver1BestTime);
+    			bestTime.setText(getTime(lapTime,"mm:ss.SS"));
+    		}
+    		
+    	}
+    	else if(currentDriver == driver2.getName()){
+    		time = driver2.getTime();
+    		if(time == 0 || lapTime < time ){
+    			driver2.setTime(lapTime);
+    			TextView bestTime = (TextView) findViewById(R.id.driver2BestTime);
+    			bestTime.setText(getTime(lapTime,"mm:ss.SS"));
+    		}
+    	}
+    	else if(currentDriver == driver3.getName()){
+    		time = driver3.getTime();
+    		if(time == 0 || lapTime < time ){
+    			driver3.setTime(lapTime);
+    			TextView bestTime = (TextView) findViewById(R.id.driver3BestTime);
+    			bestTime.setText(getTime(lapTime,"mm:ss.SS"));
+    		}
+    	}
+    	else{
+    		time = driver4.getTime();
+    		if(time == 0 || lapTime < time ){
+    			driver4.setTime(lapTime);
+    			TextView bestTime = (TextView) findViewById(R.id.driver4BestTime);
+    			bestTime.setText(getTime(lapTime,"mm:ss.SS"));
+    		}
+    	}
+
     }
     
     
