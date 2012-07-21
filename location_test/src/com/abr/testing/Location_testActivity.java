@@ -250,6 +250,11 @@ public class Location_testActivity extends Activity {
         	float bearingToStart = location.bearingTo(startLocation);
         	String start = "Bearing to start: " + bearingToStart + "\nStart longitude: " + startLongitudeMin + "\nStart latitude: " + startLatitudeMin;
         	debugString = start + "\n" + debugString;
+        	
+        	//Save some debug info to file, what more should be saved?
+        	//Since bearingToStart is key for new lap I'll save that as well as currentLapTime
+        	String saveDebug = bearingToStart + " - " + getTime(currentLapTime,"mm:ss") + " - " + totalLaps + "\n";
+        	saveToFile(saveDebug, "debug_abr_laptimer.txt", true);
     	}
     	//Check the newLap and leftStartLine booleans
     	debugString = debugString + "\nNew lap: " + newLap + "\nLeft start/finish: " + leftStartLine;
@@ -368,6 +373,30 @@ public class Location_testActivity extends Activity {
     		}
     	}
 
+    }
+    public void saveToFile(String text, String fileName, boolean append){
+    	
+    	String state = Environment.getExternalStorageState();
+    	
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            // We can read and write the media
+        	File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            File file = new File(path, fileName);
+            
+            try {
+                // Make sure the directory exists.
+                path.mkdirs();
+
+                // Copy the string to the file.
+                OutputStream os = new FileOutputStream(file,append);
+                os.write(text.getBytes());
+                os.close();
+
+            } catch (IOException e) {
+            	//Hmm should have some exceptions handling here
+
+            }
+        }
     }
     
     
