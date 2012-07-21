@@ -7,13 +7,11 @@ public class Driver {
 	private int stintLaps=0,laps=0;
 	
 	public String getName(){
-		return name;
-		
+		return name;	
 	}
 	
 	public void setName(String name){
-		this.name = name;
-		
+		this.name = name;	
 	}
 	
 	public long getTime(){
@@ -22,25 +20,26 @@ public class Driver {
 	
 	public void setTime(long time){
 		this.bestTime = time;
-		
 	}
 	
 	public int getStintLaps(){
 		return stintLaps;
 	}
 	
-	public void setStintLaps(int stint){
-		this.stintLaps = stint;
-		
+	public void increaseStintLaps(){
+		stintLaps = stintLaps + 1;
+	}
+	
+	public void resetStintLaps(){
+		stintLaps = 0;
 	}
 	
 	public int getLaps(){
 		return laps;
 	}
 	
-	public void setLaps(int laps){
-		this.laps = laps;
-		
+	public void increaseLaps(){
+		laps = laps + 1;
 	}
 
 }

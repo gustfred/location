@@ -46,8 +46,9 @@ public class Location_testActivity extends Activity {
     public boolean leftStartLine = false; // Will be set to true when the car has left the start/finish line
     public float startLineCriteria = 40; // Meters from starting point to be possible to register new lap
     public boolean newLap = true; // Will be set to true when new lap is completed and set to false when leftStartLine is set to true
-    public String currentDriver = "Fredrik"; // String containing the name of the current driver
-    public Driver driver1 = new Driver(), driver2 = new Driver(), driver3 = new Driver(), driver4 = new Driver(); //Four drivers 
+    public Driver currentDriver = new Driver(); // The driver that currently is driving (either 1, 2, 3 or 4)
+    public Driver driver1 = new Driver(), driver2 = new Driver(), driver3 = new Driver(), driver4 = new Driver(); //Four drivers
+    public float speed = 0; //Not all location updates hold speed information, save last know speed here
     
     
     @Override
@@ -84,7 +85,24 @@ public class Location_testActivity extends Activity {
 
     @Override
     public void onStart(){
-    	super.onStart(); 	
+    	super.onStart();
+    	
+    	//Test to see if scrolling is implemented correctly.
+    	//Remove until stop remove
+    	//ScrollView scroll = (ScrollView) findViewById(R.id.scrollView1);
+    	//scroll.fullScroll(View.FOCUS_DOWN);
+    	/*TextView textViewallLaps = (TextView) findViewById(R.id.allLaps);
+		String allLapsString = "\n apa\n bepa\n apa\n bepa\n apa\n bepa\n apa\n bepa\n apa\n bepa\n apa\n bepa" ;
+    	textViewallLaps.append(allLapsString);
+    	textViewallLaps.append(allLapsString);
+    	textViewallLaps.append(allLapsString);
+    	textViewallLaps.append(allLapsString);
+    	textViewallLaps.append(allLapsString);
+    	textViewallLaps.append(allLapsString);textViewallLaps.append(allLapsString);
+    	textViewallLaps.append(allLapsString);textViewallLaps.append(allLapsString);*/
+    	//Stop removing :)
+    	
+    	
     	
         // Define a listener that responds to location updates
         locationListener = new LocationListener() {
@@ -129,30 +147,8 @@ public class Location_testActivity extends Activity {
         	String FILENAME = getTime(lastLocation.getTime(),"yyyy-MM-dd_HH_mm_ss_SS") + ".txt";
             TextView laps = (TextView) findViewById(R.id.allLaps);
             CharSequence chars = laps.getText();
-            String string = chars.toString(); 
-
-        
-	        String state = Environment.getExternalStorageState();
-	
-	        if (Environment.MEDIA_MOUNTED.equals(state)) {
-	            // We can read and write the media
-	        	File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-	            File file = new File(path, FILENAME);
-	            
-	            try {
-	                // Make sure the directory exists.
-	                path.mkdirs();
-
-	                // Copy the string to the file.
-	                OutputStream os = new FileOutputStream(file);
-	                os.write(string.getBytes());
-	                os.close();
-
-	            } catch (IOException e) {
-	            	//Hmm should have some exceptions handling here
-
-	            }
-	        }
+            String string = chars.toString();
+            saveToFile(string,FILENAME,true);
 
         }
     	
@@ -174,6 +170,11 @@ public class Location_testActivity extends Activity {
     		TextView textViewCurrentLapTime = (TextView) findViewById(R.id.currentLapTime);
 	    	textViewCurrentLapTime.setText(getTime(currentLapTime,"mm:ss.SS"));
 	    	
+	    	//Save speed if available
+	    	if(location.hasSpeed()){
+	    		speed = location.getSpeed();
+	    	}
+	    	
 	    	if(newLap){
 	    		float distanceFromStart = location.distanceTo(startLocation);
 	    		if(distanceFromStart > startLineCriteria && distanceFromStart > location.getAccuracy()){
@@ -188,14 +189,19 @@ public class Location_testActivity extends Activity {
     			float bearingDiff = Math.abs(lastBearingTo-currentBearingTo);
     			if(bearingDiff > bearingSetting && location.distanceTo(startLocation) < startLineCriteria){
     				totalLaps = totalLaps + 1;
-    				//
+    				//Let's get of the grid :)
     				newLap = true;
     				leftStartLine = false;
     				TextView laps = (TextView) findViewById(R.id.laps);
         	    	String lapString = totalLaps + " laps";
         	    	laps.setText(lapString);
-    				//Later add stint laps
-    				
+    				//Increase total laps and stint laps for current driver
+        	    	currentDriver.increaseLaps();
+        	    	currentDriver.increaseStintLaps();
+        	    	//And update stint laps and total laps
+        	        TextView lapsText = (TextView) findViewById(R.id.driverLaps);
+        	    	lapsText.setText(currentDriver.getStintLaps() + " (" + currentDriver.getLaps() + ") laps");
+    				//Use speed and distance to compensate for when passing the start/finish line
     				compensateLocation(location);
     			}    			
     		}
@@ -211,7 +217,6 @@ public class Location_testActivity extends Activity {
     		lastLocation = location;
     	}
     }
-    
     public void printDebug(Location location){
     	
     	String debugString;
@@ -262,7 +267,6 @@ public class Location_testActivity extends Activity {
     	TextView debugInfo = (TextView) findViewById(R.id.debugInfo);
     	debugInfo.setText(debugString);
     }
-    
     public static String getTime(long milliSeconds, String dateFormat)
     {
         // Create a DateFormatter object for displaying date in specified format.
@@ -273,15 +277,14 @@ public class Location_testActivity extends Activity {
          calendar.setTimeInMillis(milliSeconds);
          return formatter.format(calendar.getTime());
     }
-    
     public void compensateLocation(Location location){
     	//Recalculate when passing finish line
-		if(location.hasSpeed()){
+		if(speed > 0){
 			float lastToStart = lastLocation.distanceTo(startLocation);
 			float currentToStart = location.distanceTo(startLocation);
 			float travelledDistance = location.distanceTo(lastLocation);
 			float weightedDistance = ( currentToStart / (currentToStart + lastToStart) ) * travelledDistance;
-			long timeCompensate = (long) ( (weightedDistance / location.getSpeed()) / 1000 ); //get it in milliseconds
+			long timeCompensate = (long) ( (weightedDistance / location.getSpeed()) * 1000 ); //get it in milliseconds
 			// Reset location to finish line
 			location.setTime(location.getTime()-timeCompensate);
 			location.setLatitude(startLocation.getLatitude());
@@ -301,7 +304,6 @@ public class Location_testActivity extends Activity {
 		TextView textViewlastLapTime = (TextView) findViewById(R.id.latestLaptime);
     	textViewlastLapTime.setText(getTime(latestLapTime,"mm:ss.SS"));
     }
-    
     public void toggleStartRace(View view) {
         // Is the start race toggle on?
         boolean on = ((ToggleButton) view).isChecked();
@@ -328,18 +330,37 @@ public class Location_testActivity extends Activity {
         }
     }
     public void changeDriver(View view) {
-        // Is the start race toggle on?
+        // Which driver button was pushed
         CharSequence driverNameChar = ((TextView) view).getText();
         String driverName = driverNameChar.toString();
 
-    	// Change Current driver
-        currentDriver = driverName;
+    	// Change Current driver     
+        if(driverName == driver1.getName()){
+    		currentDriver = driver1;
+    	}
+    	else if(driverName == driver2.getName()){
+    		currentDriver = driver2;
+    	}
+    	else if(driverName == driver3.getName()){
+    		currentDriver = driver3;
+    	}
+    	else{
+    		currentDriver = driver4;
+    	}
+        //Reset drivers stint laps
+        currentDriver.resetStintLaps();
+        //And update stint laps and total laps
+        TextView laps = (TextView) findViewById(R.id.driverLaps);
+    	laps.setText(currentDriver.getStintLaps() + " (" + currentDriver.getLaps() + ") laps");
+        //Change the currentDriver textview with the name of current driver
     	TextView current = (TextView) findViewById(R.id.currentDriver);
-    	current.setText(currentDriver);
+    	current.setText(currentDriver.getName());
     }
     public void checkCurrentDriverBestTime(long lapTime){
-    	long time;
-    	if(currentDriver == driver1.getName()){
+    	//Get currentDrivers best lap time
+    	long time = currentDriver.getTime();
+    	//Check if new lap time is better??    	
+    	if(currentDriver.getName() == driver1.getName()){
     		time = driver1.getTime();
     		if(time == 0 || lapTime < time ){
     			driver1.setTime(lapTime);
@@ -348,7 +369,7 @@ public class Location_testActivity extends Activity {
     		}
     		
     	}
-    	else if(currentDriver == driver2.getName()){
+    	else if(currentDriver.getName() == driver2.getName()){
     		time = driver2.getTime();
     		if(time == 0 || lapTime < time ){
     			driver2.setTime(lapTime);
@@ -356,7 +377,7 @@ public class Location_testActivity extends Activity {
     			bestTime.setText(getTime(lapTime,"mm:ss.SS"));
     		}
     	}
-    	else if(currentDriver == driver3.getName()){
+    	else if(currentDriver.getName() == driver3.getName()){
     		time = driver3.getTime();
     		if(time == 0 || lapTime < time ){
     			driver3.setTime(lapTime);
@@ -398,6 +419,5 @@ public class Location_testActivity extends Activity {
             }
         }
     }
-    
     
 }

@@ -95,7 +95,7 @@
 		        android:id="@+id/driverLaps"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:text="stint/total laps"
+		        android:text="stint (total laps)"
 		        android:textAppearance="?android:attr/textAppearanceLarge"
 		        android:textSize="50sp" />
 
@@ -111,13 +111,13 @@
 		<ScrollView
 		    android:id="@+id/scrollView1"
 		    android:layout_width="match_parent"
-		    android:layout_height="match_parent" >
+		    android:layout_height="match_parent">
 
 		    <TextView
 		    android:id="@+id/allLaps"
 		    android:layout_width="match_parent"
-		    android:layout_height="match_parent"
-		    android:text="All laps"
+		    android:layout_height="wrap_content"
+		    android:text="All laps:"
 		    android:textAppearance="?android:attr/textAppearanceLarge"/>
 		</ScrollView>
 
