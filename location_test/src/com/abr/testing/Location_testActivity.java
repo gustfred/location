@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,8 +19,13 @@ import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.TextToSpeech.OnInitListener;
+import android.content.Intent;
+import java.util.Locale;
 
-public class Location_testActivity extends Activity {
+
+public class Location_testActivity extends Activity implements OnInitListener{
     /** Called when the activity is first created. */
 	public final static String EXTRA_MESSAGE = "com.example.myapp.MESSAGE";
 	public static final String PREFS_NAME = "abrLapTimer";
@@ -49,6 +53,8 @@ public class Location_testActivity extends Activity {
     public Driver currentDriver = new Driver(); // The driver that currently is driving (either 1, 2, 3 or 4)
     public Driver driver1 = new Driver(), driver2 = new Driver(), driver3 = new Driver(), driver4 = new Driver(); //Four drivers
     public float speed = 0; //Not all location updates hold speed information, save last know speed here
+    private int MY_DATA_CHECK_CODE = 0; //For TTS
+    private TextToSpeech myTTS;
     
     
     @Override
@@ -76,6 +82,11 @@ public class Location_testActivity extends Activity {
         driver2Text.setText(driver2.getName());
         driver3Text.setText(driver3.getName());
         driver4Text.setText(driver4.getName());
+        
+        //For the TTS functionality
+        Intent checkTTSIntent = new Intent();
+        checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+        startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
         
         // Acquire a reference to the system Location Manager
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -154,6 +165,23 @@ public class Location_testActivity extends Activity {
     	
     	// Remove the listener you previously added
     	locationManager.removeUpdates(locationListener);
+    }
+    
+    @Override
+    public void onDestroy() {
+        // Don't forget to shutdown tts!
+        if (myTTS != null) {
+            myTTS.stop();
+            myTTS.shutdown();
+        }
+        super.onDestroy();
+    }
+    
+    public void onInit(int initStatus) {
+        if (initStatus == TextToSpeech.SUCCESS) {
+        	//Perhaps use  Locale.getDefault() later on
+            myTTS.setLanguage(Locale.US);
+        }
     }
     
     public void checkIfNewLap(Location location){
@@ -355,6 +383,9 @@ public class Location_testActivity extends Activity {
         //Change the currentDriver textview with the name of current driver
     	TextView current = (TextView) findViewById(R.id.currentDriver);
     	current.setText(currentDriver.getName());
+    	
+    	//Test the text-to-speech
+    	speakWords("New driver is " + currentDriver.getName());
     }
     public void checkCurrentDriverBestTime(long lapTime){
     	//Get currentDrivers best lap time
@@ -418,6 +449,26 @@ public class Location_testActivity extends Activity {
 
             }
         }
+    }
+    private void speakWords(String speech) {
+    	 
+        //speak straight away
+        myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
+        
+        //Queue up
+        //myTTS.speak(speech, TextToSpeech.QUEUE_ADD, null);
+    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MY_DATA_CHECK_CODE) {
+            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {      
+                myTTS = new TextToSpeech(this, this);
+            }
+            else {
+                Intent installTTSIntent = new Intent();
+                installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                startActivity(installTTSIntent);
+            }
+            }
     }
     
 }
