@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" 
-    android:padding="5dp">
+    android:padding="15dp">
     
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -17,7 +17,7 @@
 	        android:layout_weight="3"
 	        android:text="Senaste varvtid"
 	        android:textAppearance="?android:attr/textAppearanceLarge"
-	        android:textSize="20sp" />
+	        android:textSize="60sp" />
 	
 	    <TextView
 	        android:id="@+id/raceClock"
@@ -26,7 +26,7 @@
 	        android:layout_weight="1"
 	        android:text="Klocka"
 	        android:textAppearance="?android:attr/textAppearanceLarge"
-	        android:textSize="20sp" 
+	        android:textSize="60sp" 
 	        android:gravity="center"/>
 	</LinearLayout>
 	
@@ -41,7 +41,7 @@
 	        android:layout_weight="3"
 	        android:text="Rullande varvtid"
 	        android:textAppearance="?android:attr/textAppearanceLarge"
-	        android:textSize="20sp" />
+	        android:textSize="60sp" />
 	
 		<TextView
 		    android:id="@+id/laps"
@@ -50,7 +50,7 @@
 		    android:layout_weight="1"
 		    android:text="Varv"
 		    android:textAppearance="?android:attr/textAppearanceLarge"
-		    android:textSize="20sp" 
+		    android:textSize="60sp" 
 		    android:gravity="center"/>
 	</LinearLayout>
 	
@@ -73,7 +73,7 @@
 			    android:textOff="Race off"
 			    android:onClick="toggleStartRace"
 			    android:textAppearance="?android:attr/textAppearanceLarge"
-		        android:textSize="16sp"/>
+		        android:textSize="50sp"/>
 	        
 	        <ToggleButton 
 			    android:id="@+id/debugOn"
@@ -83,21 +83,21 @@
 			    android:textOff="Debug off"
 			    android:onClick="toggleDebug"
 			    android:textAppearance="?android:attr/textAppearanceLarge"
-		        android:textSize="16sp"/>
+		        android:textSize="50sp"/>
 	        <TextView
 		        android:id="@+id/currentDriver"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:text="The Driver"
 		        android:textAppearance="?android:attr/textAppearanceLarge"
-		        android:textSize="16sp" />
+		        android:textSize="50sp" />
 	        <TextView
 		        android:id="@+id/driverLaps"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:text="stint (total laps)"
 		        android:textAppearance="?android:attr/textAppearanceLarge"
-		        android:textSize="16sp" />
+		        android:textSize="50sp" />
 
 	    </LinearLayout>
 	    
@@ -106,7 +106,7 @@
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:text="Debug info!"
-		    android:textAppearance="?android:attr/textAppearanceSmall"/>
+		    android:textAppearance="?android:attr/textAppearanceLarge"/>
 
 		<ScrollView
 		    android:id="@+id/scrollView1"
@@ -118,7 +118,7 @@
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content"
 		    android:text="All laps:"
-		    android:textAppearance="?android:attr/textAppearanceSmall"/>
+		    android:textAppearance="?android:attr/textAppearanceLarge"/>
 		</ScrollView>
 
 	</LinearLayout>
@@ -129,7 +129,7 @@
 	    android:layout_height="wrap_content"
 	    android:orientation="horizontal"
 	    android:background="@drawable/borderlayout"
-	    android:padding="1dp">
+	    android:padding="2dp">
 		
 	    <TextView
 		    android:id="@+id/driver1BestTime"
@@ -140,7 +140,7 @@
 			android:textColor="#000000"
 		    android:text="@string/bestLaptime"
 		    android:textAppearance="?android:attr/textAppearanceLarge"
-		    android:textSize="14sp" 
+		    android:textSize="50sp" 
 		    android:gravity="center_horizontal"/>
 	    <TextView
 		    android:id="@+id/driver2BestTime"
@@ -151,7 +151,7 @@
 			android:textColor="#000000"
 		    android:text="@string/bestLaptime"
 		    android:textAppearance="?android:attr/textAppearanceLarge"
-		    android:textSize="14sp" 
+		    android:textSize="50sp" 
 		    android:gravity="center_horizontal"/>
 		<TextView
 		    android:id="@+id/driver3BestTime"
@@ -162,7 +162,7 @@
 			android:textColor="#000000"
 		    android:text="@string/bestLaptime"
 		    android:textAppearance="?android:attr/textAppearanceLarge"
-		    android:textSize="14sp" 
+		    android:textSize="50sp" 
 		    android:gravity="center_horizontal"/>
 
 	    <TextView
@@ -174,7 +174,7 @@
 			android:textColor="#000000"
 	        android:text="@string/bestLaptime"
 	        android:textAppearance="?android:attr/textAppearanceLarge"
-	        android:textSize="14sp" 
+	        android:textSize="50sp" 
 			android:gravity="center_horizontal"/>
 		
     </LinearLayout>
@@ -192,7 +192,7 @@
 		    android:layout_weight="1"
 		    android:text="Driver1"
 		    android:textAppearance="?android:attr/textAppearanceLarge"
-		    android:textSize="14sp" 
+		    android:textSize="50sp" 
 		    android:onClick="changeDriver" />
 	    <Button
 		    android:id="@+id/driver2"
@@ -201,7 +201,7 @@
 		    android:layout_weight="1"
 		    android:text="Driver2"
 		    android:textAppearance="?android:attr/textAppearanceLarge"
-		    android:textSize="14sp" 
+		    android:textSize="50sp" 
 		    android:onClick="changeDriver" />
 		<Button
 		    android:id="@+id/driver3"
@@ -210,7 +210,7 @@
 		    android:layout_weight="1"
 		    android:text="Driver3"
 		    android:textAppearance="?android:attr/textAppearanceLarge"
-		    android:textSize="14sp" 
+		    android:textSize="50sp" 
 		    android:onClick="changeDriver" />
 	    <Button
 		    android:id="@+id/driver4"
@@ -219,7 +219,7 @@
 		    android:layout_weight="1"
 		    android:text="Driver4"
 		    android:textAppearance="?android:attr/textAppearanceLarge"
-		    android:textSize="14sp" 
+		    android:textSize="50sp" 
 		    android:onClick="changeDriver" />
 		
     </LinearLayout>
