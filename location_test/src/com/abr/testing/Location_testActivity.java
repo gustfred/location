@@ -180,7 +180,7 @@ public class Location_testActivity extends Activity implements OnInitListener{
     public void onInit(int initStatus) {
         if (initStatus == TextToSpeech.SUCCESS) {
         	//Perhaps use  Locale.getDefault() later on
-            myTTS.setLanguage(Locale.US);
+            myTTS.setLanguage(Locale.UK);
         }
     }
     
@@ -331,6 +331,15 @@ public class Location_testActivity extends Activity implements OnInitListener{
 		//Add latest laptime to textfield
 		TextView textViewlastLapTime = (TextView) findViewById(R.id.latestLaptime);
     	textViewlastLapTime.setText(getTime(latestLapTime,"mm:ss.SS"));
+    	
+    	//Do some speaking about how the lap was.
+    	String speech ="";
+    	//best lap?
+    	if(latestLapTime <= currentDriver.getTime()){
+    		speech = "Your best lap time. Keep it up. ";
+    	}
+    	speech = speech + "your lap time was " + getTime(latestLapTime,"mm") + " minutes " + getTime(latestLapTime,"ss.SS") + " seconds.";
+    	speakWords(speech);
     }
     public void toggleStartRace(View view) {
         // Is the start race toggle on?
