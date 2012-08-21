@@ -322,9 +322,37 @@ public class Location_testActivity extends Activity implements OnInitListener{
 		lapStartTime = location.getTime();
 		//Add lap to textview all Laps.
 		TextView textViewallLaps = (TextView) findViewById(R.id.allLaps);
-		String allLapsString = "\n" + totalLaps + " " + getTime(latestLapTime,"mm:ss.SS") + " " + currentDriver;
+		String allLapsString = "\n" + totalLaps + " " + getTime(latestLapTime,"mm:ss.SS") + " " + currentDriver.getName();
     	textViewallLaps.append(allLapsString);
 		
+    	//Do some speaking about how the lap was.
+    	String speech = "";
+    	//best lap?
+    	if(latestLapTime <= currentDriver.getTime()){
+    		speech = "Your best lap time. ";
+    		long lapDiff = currentDriver.getTime() - latestLapTime;
+    		//More than one minute?
+    		if(lapDiff > 60000){
+    			speech = speech + "With " + getTime(lapDiff,"mm") + " minutes " + getTime(lapDiff,"ss.SS") + " seconds.";
+    		}
+    		else{
+    			speech = speech + "With " + getTime(lapDiff,"ss.SS") + " seconds.";
+    		}
+    		
+    	}
+    	else if(currentDriver.getTime() > 0){
+    		long lapDiff = latestLapTime - currentDriver.getTime();
+    		//More than one minute?
+    		if(lapDiff > 60000){
+    			speech = speech + "Slower by " + getTime(lapDiff,"mm") + " minutes " + getTime(lapDiff,"ss.SS") + " seconds.";
+    		}
+    		else{
+    			speech = speech + "Slower by " + getTime(lapDiff,"ss.SS") + " seconds.";
+    		}
+    	}
+    	speech = speech + "Your lap time was " + getTime(latestLapTime,"mm") + " minutes " + getTime(latestLapTime,"ss.SS") + " seconds.";
+    	speakWords(speech);
+    	
 		//Add check if laptime is the driver's best one.
 		checkCurrentDriverBestTime(latestLapTime);
 		
@@ -332,14 +360,6 @@ public class Location_testActivity extends Activity implements OnInitListener{
 		TextView textViewlastLapTime = (TextView) findViewById(R.id.latestLaptime);
     	textViewlastLapTime.setText(getTime(latestLapTime,"mm:ss.SS"));
     	
-    	//Do some speaking about how the lap was.
-    	String speech ="";
-    	//best lap?
-    	if(latestLapTime <= currentDriver.getTime()){
-    		speech = "Your best lap time. Keep it up. ";
-    	}
-    	speech = speech + "your lap time was " + getTime(latestLapTime,"mm") + " minutes " + getTime(latestLapTime,"ss.SS") + " seconds.";
-    	speakWords(speech);
     }
     public void toggleStartRace(View view) {
         // Is the start race toggle on?
